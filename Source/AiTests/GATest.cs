@@ -186,11 +186,14 @@ namespace AiTests
           Debug.WriteLine(string.Format("Slot percent {0}", sl.PercentFilled));
         Debug.WriteLine(string.Format("Box usage {0}", sc.BoxUsage));
 
+        if (sc.BoxUsage == 1)
+          stopEvent.Set();
       };
 
+      DateTime start = DateTime.Now;
       ga.Start();
-
       stopEvent.WaitOne(TimeSpan.FromMinutes(2));
+      Debug.WriteLine(string.Format("Runtime {0}", DateTime.Now - start));
     }
   }
 }
