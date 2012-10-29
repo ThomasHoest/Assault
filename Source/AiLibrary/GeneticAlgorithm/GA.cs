@@ -12,7 +12,7 @@ namespace AiLibrary.GeneticAlgorithm
   {
     double CalculateFitness(BitArray data);
     int PopulationSize { get; }
-    int NumberOfChromosones { get; }
+    int ChromosoneLength { get; }
     double MutationRate { get; }
     double CrossOverRate { get; }
   }
@@ -38,15 +38,18 @@ namespace AiLibrary.GeneticAlgorithm
 
   public class GA
   {
+
     public Chromosome Best { get; set; }
     public double BestFit { get; set; }
-    public int Generation { get; set; }
-    private Random m_Rand = new Random();
-    IGAFunctions m_Functions;
-    private bool m_DoRun;
+    public int Generation { get; set; }    
     public List<Chromosome> Chromosomes { get; set; }
     public event EventHandler OnNewGeneration;
     public event EventHandler OnBestFitChanged;
+
+    private Random m_Rand = new Random();
+    IGAFunctions m_Functions;
+    private bool m_DoRun;
+    private AutoResetEvent m_Stopped = new AutoResetEvent(false);
 
     public GA(IGAFunctions functions)
     {
@@ -55,7 +58,7 @@ namespace AiLibrary.GeneticAlgorithm
 
       for (int i = 0; i < functions.PopulationSize; i++)
       {
-        Chromosome chromosome = new Chromosome(functions.NumberOfChromosones);
+        Chromosome chromosome = new Chromosome(functions.ChromosoneLength);
         chromosome.Fitness = m_Functions.CalculateFitness(chromosome.Data);
         Chromosomes.Add(chromosome);
       }
@@ -159,7 +162,14 @@ namespace AiLibrary.GeneticAlgorithm
             if(OnNewGeneration != null)
               OnNewGeneration(this, EventArgs.Empty);
           }
+          m_Stopped.Set();
         });
+    }
+
+    public void Stop()
+    {
+      m_DoRun = false;
+      m_Stopped.WaitOne();
     }
   }
 }

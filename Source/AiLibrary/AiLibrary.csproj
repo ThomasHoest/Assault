@@ -39,6 +39,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="BinFitting\BinFitting.cs" />
     <Compile Include="GeneticAlgorithm\GA.cs" />
     <Compile Include="NeuralNet\NeuralNet.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
