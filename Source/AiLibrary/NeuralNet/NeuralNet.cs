@@ -25,9 +25,6 @@ namespace AiLibrary.NeuralNet
     {
       Connections.Add(new Connections(){Target = n, Weigth = w});
     }
-
-
-
   }
 
   class Connections
