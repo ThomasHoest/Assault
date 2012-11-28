@@ -28,7 +28,7 @@ namespace Assault.TheGame
     /// </summary>
     protected override void Initialize()
     {
-      m_Entities.Add(new Enemy());
+      m_Entities.Add(new Tank());
       base.Initialize();
     }
 
@@ -60,7 +60,9 @@ namespace Assault.TheGame
     /// <param name="gameTime">Provides a snapshot of timing values.</param>
     protected override void Update(GameTime gameTime)
     {
-      // TODO: Add your update logic here      
+      foreach (GameEntity entity in m_Entities)
+        entity.Update(gameTime);
+
       base.Update(gameTime);
     }
 

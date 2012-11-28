@@ -9,7 +9,6 @@ namespace AiLibrary.NeuralNet
   public class NeuralNet
   {
 
-
   }
 
   class Neuron
