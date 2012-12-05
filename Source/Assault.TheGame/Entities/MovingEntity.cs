@@ -17,6 +17,7 @@ namespace Assault.TheGame.Entities
     public Vector2 Side { get; set; }
     public Vector2 Velocity { get; set; }
 
+    public double Speed { get { return Velocity.Length(); } }
     public float Mass { get; set; }
     public float MaxSpeed { get; set; }
     public float MaxForce { get; set; }
@@ -24,9 +25,19 @@ namespace Assault.TheGame.Entities
 
     public TimeSpan TimeElapsed { get; set; }
 
-    private SteeringBehavior m_Steering = new SteeringBehavior();
+    private SteeringBehavior m_Steering;
 
-    public override void Update(GameTime time)
+    public MovingEntity()
+    {
+       m_Steering = new SteeringBehavior(this);
+    }
+
+    public void SetTarget(MovingEntity target)
+    {
+      m_Steering.Target = target;
+    }
+
+    public void Move(GameTime time)
     {
       TimeElapsed = time.ElapsedGameTime;
 
@@ -42,7 +53,7 @@ namespace Assault.TheGame.Entities
       Velocity += Vector2.Multiply(acceleration, (float)time.ElapsedGameTime.TotalSeconds);
 
       //make sure vehicle does not exceed maximum velocity
-      Velocity.Truncate(MaxSpeed);
+      Velocity = Velocity.Truncate(MaxSpeed);
 
       //update the position
       Position += Vector2.Multiply(Velocity, (float)time.ElapsedGameTime.TotalSeconds);
@@ -57,7 +68,9 @@ namespace Assault.TheGame.Entities
       //EnforceNonPenetrationConstraint(this, World()->Agents());
 
       //treat the screen as a toroid
-      //WrapAround(m_vPos, m_pWorld->cxClient(), m_pWorld->cyClient());
+      Vector2 pos = Position;
+      WrapAround(ref pos, GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Width, GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Height);
+      Position = pos;
 
       //update the vehicle's current cell if space partitioning is turned on
       //if (Steering()->isSpacePartitioningOn())
@@ -69,6 +82,21 @@ namespace Assault.TheGame.Entities
       //{
       //  m_vSmoothedHeading = m_pHeadingSmoother->Update(Heading());
       //}
+    }
+
+    void WrapAround(ref Vector2 pos, int MaxX, int MaxY)
+    {
+      if (pos.X > MaxX) 
+        pos.X = 0.0F;
+
+      if (pos.X < 0)    
+        pos.X = (float)MaxX;
+
+      if (pos.Y < 0)    
+        pos.Y = (float)MaxY;
+
+      if (pos.Y > MaxY) 
+        pos.Y = 0.0F;
     }
 
 

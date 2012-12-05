@@ -1,6 +1,8 @@
-﻿using Assault.TheGame.Entities;
+﻿using Assault.TheGame.Engine;
+using Assault.TheGame.Entities;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using Microsoft.Xna.Framework.Input.Touch;
 using System.Collections.Generic;
 
 namespace Assault.TheGame
@@ -13,6 +15,7 @@ namespace Assault.TheGame
     GraphicsDeviceManager m_graphics;
     SpriteBatch m_spriteBatch;
     List<GameEntity> m_Entities = new List<GameEntity>();
+    GameControls m_Controls; 
 
     public Assault()
     {
@@ -28,7 +31,16 @@ namespace Assault.TheGame
     /// </summary>
     protected override void Initialize()
     {
-      m_Entities.Add(new Tank());
+      TouchPanel.EnabledGestures = GestureType.Tap;
+
+      m_Controls = new GameControls();
+
+      Tank t = new Tank();
+      Dummy d = new Dummy();
+      t.SetTarget(d);
+      m_Entities.Add(t);
+      m_Entities.Add(d);
+
       base.Initialize();
     }
 
@@ -60,8 +72,17 @@ namespace Assault.TheGame
     /// <param name="gameTime">Provides a snapshot of timing values.</param>
     protected override void Update(GameTime gameTime)
     {
+      if (TouchPanel.IsGestureAvailable)
+      {
+        GestureSample sample = TouchPanel.ReadGesture();
+        m_Controls.TouchInput.X = sample.Position.X;
+        m_Controls.TouchInput.Y = sample.Position.Y;
+      }
+
       foreach (GameEntity entity in m_Entities)
-        entity.Update(gameTime);
+      {
+        entity.Update(gameTime, m_Controls);
+      }
 
       base.Update(gameTime);
     }
@@ -72,6 +93,9 @@ namespace Assault.TheGame
     /// <param name="gameTime">Provides a snapshot of timing values.</param>
     protected override void Draw(GameTime gameTime)
     {
+      //foreach (GameEntity entity in m_Entities)
+      //  entity.Update(gameTime);
+
       GraphicsDevice.Clear(Color.CornflowerBlue);
       m_spriteBatch.Begin();
       foreach (GameEntity entity in m_Entities)

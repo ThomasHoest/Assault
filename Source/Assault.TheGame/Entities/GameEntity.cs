@@ -1,4 +1,5 @@
-﻿using Microsoft.Xna.Framework;
+﻿using Assault.TheGame.Engine;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using System;
@@ -12,13 +13,14 @@ namespace Assault.TheGame.Entities
   abstract class GameEntity
   {
     int m_ID;
-    double m_dBoundingRadius;
+    double m_BoundingRadius;
 
     public Vector2 Position {get; set; }
     public Vector2 Scale { get; set; }
 
     public Texture2D Texture { get; set; }
-    public abstract void Update(GameTime time);
+    
+    public abstract void Update(GameTime time, GameControls controls);
     public abstract void Draw(SpriteBatch spriteBatch);
     public abstract void Load(ContentManager content);
 

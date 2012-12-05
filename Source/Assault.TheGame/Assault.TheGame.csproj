@@ -129,6 +129,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Engine\GameControls.cs" />
     <Compile Include="Engine\SteeringBehavior.cs" />
     <Compile Include="Entities\AutonomousEntity.cs" />
     <Compile Include="Entities\MovingEntity.cs" />

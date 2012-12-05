@@ -7,15 +7,15 @@ using System.Threading.Tasks;
 
 namespace Assault.TheGame.Utils
 {
-  class C2DMatrix
+  public class C2DMatrix
   {
-    struct Matrix
+    class Matrix
     {
       public double _11, _12, _13;
       public double _21, _22, _23;
       public double _31, _32, _33;
 
-      Matrix()
+      public Matrix()
       {
         _11 = 0.0; _12 = 0.0; _13 = 0.0;
         _21 = 0.0; _22 = 0.0; _23 = 0.0;
@@ -23,16 +23,6 @@ namespace Assault.TheGame.Utils
       }
     };
 
-    Matrix m_Matrix;
-
-    //multiplies m_Matrix with mIn
-    void MatrixMultiply(Matrix min);
-
-    C2DMatrix()
-    {
-      //initialize the matrix to an identity matrix
-      Identity();
-    }
     //accessors to the matrix elements
     double _11 { get { return m_Matrix._11; } set { m_Matrix._11 = value; } }
     double _12 { get { return m_Matrix._12; } set { m_Matrix._12 = value; } }
@@ -46,10 +36,16 @@ namespace Assault.TheGame.Utils
     double _32 { get { return m_Matrix._32; } set { m_Matrix._32 = value; } }
     double _33 { get { return m_Matrix._33; } set { m_Matrix._33 = value; } }
 
-    //multiply two matrices together
-    public void MatrixMultiply(Matrix mIn)
+    Matrix m_Matrix = new Matrix();
+    
+    public C2DMatrix()
     {
-      Matrix mat_temp;
+      Identity();
+    }    
+
+    private void MatrixMultiply(Matrix mIn)
+    {
+      Matrix mat_temp = new Matrix();
 
       //first row
       mat_temp._11 = (m_Matrix._11 * mIn._11) + (m_Matrix._12 * mIn._21) + (m_Matrix._13 * mIn._31);
@@ -70,61 +66,49 @@ namespace Assault.TheGame.Utils
     }
 
     ////applies a 2D transformation matrix to a std::vector of Vector2Ds
-    //inline void C2DMatrix::TransformVector2Ds(std::vector<Vector2D> &vPoint)
-    //{
-    //  for (unsigned int i=0; i<vPoint.size(); ++i)
-    //  {
-    //    double tempX =(m_Matrix._11*vPoint[i].x) + (m_Matrix._21*vPoint[i].y) + (m_Matrix._31);
+    public void TransformVector2Ds(List<Vector2> points)
+    {
+      for (int i=0; i<points.Count; ++i)
+      {
+        double tempX =(m_Matrix._11*points[i].X) + (m_Matrix._21*points[i].Y) + (m_Matrix._31);
+        double tempY = (m_Matrix._12*points[i].X) + (m_Matrix._22*points[i].Y) + (m_Matrix._32);
 
-    //    double tempY = (m_Matrix._12*vPoint[i].x) + (m_Matrix._22*vPoint[i].y) + (m_Matrix._32);
-
-    //    vPoint[i].x = tempX;
-
-    //    vPoint[i].y = tempY;
-
-    //  }
-    //}
+        points[i]= new Vector2((float)tempX, (float)tempY);
+      }
+    }
 
     ////applies a 2D transformation matrix to a single Vector2D
-    //inline void C2DMatrix::TransformVector2Ds(Vector2D &vPoint)
-    //{
+    public void TransformVector2Ds(Vector2 vPoint)
+    {
+      double tempX =(m_Matrix._11*vPoint.X) + (m_Matrix._21*vPoint.Y) + (m_Matrix._31);
+      double tempY = (m_Matrix._12*vPoint.X) + (m_Matrix._22*vPoint.Y) + (m_Matrix._32);
 
-    //  double tempX =(m_Matrix._11*vPoint.x) + (m_Matrix._21*vPoint.y) + (m_Matrix._31);
-
-    //  double tempY = (m_Matrix._12*vPoint.x) + (m_Matrix._22*vPoint.y) + (m_Matrix._32);
-
-    //  vPoint.x = tempX;
-
-    //  vPoint.y = tempY;
-    //}
-
-
+      vPoint.X = (float)tempX;
+      vPoint.Y = (float)tempY;
+    }
 
     ////create an identity matrix
     void Identity()
     {
       m_Matrix._11 = 1; m_Matrix._12 = 0; m_Matrix._13 = 0;
-
       m_Matrix._21 = 0; m_Matrix._22 = 1; m_Matrix._23 = 0;
-
       m_Matrix._31 = 0; m_Matrix._32 = 0; m_Matrix._33 = 1;
-
     }
 
     ////create a transformation matrix
-    //inline void C2DMatrix::Translate(double x, double y)
-    //{
-    //  Matrix mat;
+    public void Translate(double x, double y)
+    {
+      Matrix mat = new Matrix();
 
-    //  mat._11 = 1; mat._12 = 0; mat._13 = 0;
+      mat._11 = 1; mat._12 = 0; mat._13 = 0;
 
-    //  mat._21 = 0; mat._22 = 1; mat._23 = 0;
+      mat._21 = 0; mat._22 = 1; mat._23 = 0;
 
-    //  mat._31 = x;    mat._32 = y;    mat._33 = 1;
+      mat._31 = x;    mat._32 = y;    mat._33 = 1;
 
-    //  //and multiply
-    //  MatrixMultiply(mat);
-    //}
+      //and multiply
+      MatrixMultiply(mat);
+    }
 
     ////create a scale matrix
     //inline void C2DMatrix::Scale(double xScale, double yScale)
@@ -164,7 +148,7 @@ namespace Assault.TheGame.Utils
     ////create a rotation matrix from a 2D vector
     public void Rotate(Vector2 fwd, Vector2 side)
     {
-      Matrix mat;
+      Matrix mat = new Matrix();
 
       mat._11 = fwd.X;  mat._12 = fwd.Y; mat._13 = 0;
 
