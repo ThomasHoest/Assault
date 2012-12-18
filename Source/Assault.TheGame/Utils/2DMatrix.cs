@@ -127,22 +127,22 @@ namespace Assault.TheGame.Utils
 
 
     ////create a rotation matrix
-    //inline void C2DMatrix::Rotate(double rot)
-    //{
-    //  C2DMatrix::Matrix mat;
+    public void Rotate(double rot)
+    {
+      Matrix mat = new Matrix();
 
-    //  double Sin = sin(rot);
-    //  double Cos = cos(rot);
+      double Sin = Math.Sin(rot);
+      double Cos = Math.Cos(rot);
 
-    //  mat._11 = Cos;  mat._12 = Sin; mat._13 = 0;
+      mat._11 = Cos;  mat._12 = Sin; mat._13 = 0;
 
-    //  mat._21 = -Sin; mat._22 = Cos; mat._23 = 0;
+      mat._21 = -Sin; mat._22 = Cos; mat._23 = 0;
 
-    //  mat._31 = 0; mat._32 = 0;mat._33 = 1;
+      mat._31 = 0; mat._32 = 0;mat._33 = 1;
 
-    //  //and multiply
-    //  MatrixMultiply(mat);
-    //}
+      //and multiply
+      MatrixMultiply(mat);
+    }
 
 
     ////create a rotation matrix from a 2D vector

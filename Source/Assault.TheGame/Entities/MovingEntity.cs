@@ -8,33 +8,45 @@ using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework;
 using Assault.TheGame.Engine;
 using Assault.TheGame.Utils;
+using Assault.TheGame.World;
 
 namespace Assault.TheGame.Entities
 {
   abstract class MovingEntity : GameEntity
-  {    
+  {
+    public Vector2 TargetPosition { get; set; }
+
     public Vector2 Heading { get; set; }
     public Vector2 Side { get; set; }
     public Vector2 Velocity { get; set; }
+
+    public BehaviorType Behavior { get; set; }
 
     public double Speed { get { return Velocity.Length(); } }
     public float Mass { get; set; }
     public float MaxSpeed { get; set; }
     public float MaxForce { get; set; }
     public float MaxTurnRate { get; set; }
+    public Deceleration Deceleration { get; set; }
 
     public TimeSpan TimeElapsed { get; set; }
 
     private SteeringBehavior m_Steering;
 
-    public MovingEntity()
+    public MovingEntity(GameWorld world) : base(world)
     {
-       m_Steering = new SteeringBehavior(this);
+      m_Steering = new SteeringBehavior(this);
+      m_Steering.Walls.AddRange(world.Bounds);
     }
 
     public void SetTarget(MovingEntity target)
     {
       m_Steering.Target = target;
+    }
+
+    public void SetPursuer(MovingEntity pursuer)
+    {
+      m_Steering.Pursuer = pursuer;
     }
 
     public void Move(GameTime time)
@@ -65,12 +77,9 @@ namespace Assault.TheGame.Entities
         Side = Heading.Perpendicular();
       }
 
-      //EnforceNonPenetrationConstraint(this, World()->Agents());
+      EntityUtils.EnforceNonPenetrationConstraint(this, World.GameEntities);
 
-      //treat the screen as a toroid
-      Vector2 pos = Position;
-      WrapAround(ref pos, GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Width, GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Height);
-      Position = pos;
+      World.CheckBounds(this);
 
       //update the vehicle's current cell if space partitioning is turned on
       //if (Steering()->isSpacePartitioningOn())
@@ -98,8 +107,5 @@ namespace Assault.TheGame.Entities
       if (pos.Y > MaxY) 
         pos.Y = 0.0F;
     }
-
-
-    
   }
 }

@@ -23,5 +23,17 @@ namespace Assault.TheGame.Utils
     {
       return new Vector2(-v.Y, v.X);
     }
+
+    public static void Vec2DRotateAroundOrigin(this Vector2 v, double ang)
+    {
+      //create a transformation matrix
+      C2DMatrix mat = new C2DMatrix();
+
+      //rotate
+      mat.Rotate(ang);
+	
+      //now transform the object's vertices
+      mat.TransformVector2Ds(v);
+    }
   }
 }

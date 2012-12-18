@@ -1,27 +1,35 @@
-﻿using Assault.TheGame.Engine;
-using Assault.TheGame.Entities;
-using Assault.TheGame.World;
-using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
-using Microsoft.Xna.Framework.Input.Touch;
+using System;
 using System.Collections.Generic;
+using System.Linq;
+using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Audio;
+using Microsoft.Xna.Framework.Content;
+using Microsoft.Xna.Framework.GamerServices;
+using Microsoft.Xna.Framework.Graphics;
+using Microsoft.Xna.Framework.Input;
+using Microsoft.Xna.Framework.Input.Touch;
+using Microsoft.Xna.Framework.Media;
 
-namespace Assault.TheGame
+namespace Assault.TheGame.WP
 {
   /// <summary>
   /// This is the main type for your game
   /// </summary>
-  public class Assault : Game
+  public class Game1 : Microsoft.Xna.Framework.Game
   {
-    GraphicsDeviceManager m_graphics;
-    SpriteBatch m_spriteBatch;
-    GameControls m_Controls;
-    GameWorld m_World; 
+    GraphicsDeviceManager graphics;
+    SpriteBatch spriteBatch;
 
-    public Assault()
+    public Game1()
     {
-      m_graphics = new GraphicsDeviceManager(this);
-      Content.RootDirectory = "Assets";
+      graphics = new GraphicsDeviceManager(this);
+      Content.RootDirectory = "Content";
+
+      // Frame rate is 30 fps by default for Windows Phone.
+      TargetElapsedTime = TimeSpan.FromTicks(333333);
+
+      // Extend battery life under lock.
+      InactiveSleepTime = TimeSpan.FromSeconds(1);
     }
 
     /// <summary>
@@ -32,15 +40,7 @@ namespace Assault.TheGame
     /// </summary>
     protected override void Initialize()
     {
-      TouchPanel.EnabledGestures = GestureType.Tap;
-      m_World = new GameWorld();
-      m_Controls = new GameControls();
-
-      Tank t = new Tank(m_World);
-      Dummy d = new Dummy(m_World); 
-      t.SetPursuer(d);
-      m_World.GameEntities.Add(t);
-      m_World.GameEntities.Add(d);
+      // TODO: Add your initialization logic here
 
       base.Initialize();
     }
@@ -52,9 +52,9 @@ namespace Assault.TheGame
     protected override void LoadContent()
     {
       // Create a new SpriteBatch, which can be used to draw textures.
-      m_spriteBatch = new SpriteBatch(GraphicsDevice);
-      foreach (GameEntity entity in m_World.GameEntities)
-        entity.Load(Content);
+      spriteBatch = new SpriteBatch(GraphicsDevice);
+
+      // TODO: use this.Content to load your game content here
     }
 
     /// <summary>
@@ -73,17 +73,11 @@ namespace Assault.TheGame
     /// <param name="gameTime">Provides a snapshot of timing values.</param>
     protected override void Update(GameTime gameTime)
     {
-      if (TouchPanel.IsGestureAvailable)
-      {
-        GestureSample sample = TouchPanel.ReadGesture();
-        m_Controls.TouchInput.X = sample.Position.X;
-        m_Controls.TouchInput.Y = sample.Position.Y;
-      }
+      // Allows the game to exit
+      if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed)
+        this.Exit();
 
-      foreach (GameEntity entity in m_World.GameEntities)
-      {
-        entity.Update(gameTime, m_Controls);
-      }
+      // TODO: Add your update logic here
 
       base.Update(gameTime);
     }
@@ -94,14 +88,9 @@ namespace Assault.TheGame
     /// <param name="gameTime">Provides a snapshot of timing values.</param>
     protected override void Draw(GameTime gameTime)
     {
-      //foreach (GameEntity entity in m_Entities)
-      //  entity.Update(gameTime);
-
       GraphicsDevice.Clear(Color.CornflowerBlue);
-      m_spriteBatch.Begin();
-      foreach (GameEntity entity in m_World.GameEntities)
-        entity.Draw(m_spriteBatch);
-      m_spriteBatch.End();
+
+      // TODO: Add your drawing code here
 
       base.Draw(gameTime);
     }

@@ -1,4 +1,6 @@
-﻿using Microsoft.Xna.Framework;
+﻿using Assault.TheGame.Engine;
+using Assault.TheGame.World;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections.Generic;
@@ -10,13 +12,16 @@ namespace Assault.TheGame.Entities
 {
   class Tank : AutonomousEntity
   {
-    public Tank()
+    public Tank(GameWorld world) : base(world)
     {
-      Mass = 1F;
-      MaxForce = 100;
-      MaxSpeed = 50;
+      Mass = 0.05F;
+      MaxForce = 200;
+      MaxSpeed = 100;
       MaxTurnRate = 100;
       Position = new Vector2(500, 500);
+      BoundingRadius = 16;
+      Behavior = BehaviorType.Evade | BehaviorType.Wall_avoidance;
+      
     }
 
     public override void Load(Microsoft.Xna.Framework.Content.ContentManager content)
@@ -37,13 +42,16 @@ namespace Assault.TheGame.Entities
 
   class Dummy : MovingEntity
   {
-    public Dummy()
+    public Dummy(GameWorld world)
+      : base(world)
     {
-      Mass = 1F;
-      MaxForce = 100;
-      MaxSpeed = 50;
+      Mass = 0.05F;
+      MaxForce = 250;
+      MaxSpeed = 150;
       MaxTurnRate = 100;
-      Position = new Vector2(500, 500);
+      Position = new Vector2(200, 200);
+      BoundingRadius = 16;
+      Behavior = BehaviorType.Arrive;
     }
 
     public override void Load(Microsoft.Xna.Framework.Content.ContentManager content)
@@ -58,7 +66,8 @@ namespace Assault.TheGame.Entities
 
     public override void Update(GameTime time, Engine.GameControls controls)
     {
-      Position = new Vector2(controls.TouchInput.X, controls.TouchInput.Y);
+      TargetPosition = new Vector2(controls.TouchInput.X, controls.TouchInput.Y);
+      Move(time);
     }    
   }
 }
